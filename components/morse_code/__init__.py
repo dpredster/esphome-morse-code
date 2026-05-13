@@ -67,32 +67,35 @@ async def to_code(config):
 
 
 @automation.register_action(
-    "morse_code.start",
-    StartAction,
-    cv.maybe_simple_value(
+    name="morse_code.start",
+    action_type=StartAction,
+    schema=cv.maybe_simple_value(
         {
             cv.GenerateID(CONF_ID): cv.use_id(MorseCodeComponent),
             cv.Required(CONF_TEXT): cv.templatable(cv.string),
         },
         key=CONF_TEXT,
     ),
+    synchronous=True,
 )
 async def morse_code_start_to_code(config, action_id, template_arg, args):
-    paren = await cg.get_variable(config[CONF_ID])
-    var = cg.new_Pvariable(action_id, template_arg, paren)
+    parent = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, parent)
     template_ = await cg.templatable(config[CONF_TEXT], args, cg.std_string)
     cg.add(var.set_value(template_))
     return var
 
 
 @automation.register_action(
-    "morse_code.stop",
-    StopAction,
-    cv.Schema(
+    name="morse_code.stop",
+    action_type=StopAction,
+    schema=cv.Schema(
         {
             cv.GenerateID(): cv.use_id(MorseCodeComponent),
         }
     ),
+    synchronous=True,
+    
 )
 async def morse_code_stop_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
@@ -101,9 +104,9 @@ async def morse_code_stop_to_code(config, action_id, template_arg, args):
 
 
 @automation.register_condition(
-    "morse_code.is_running",
-    IsRunningCondition,
-    cv.Schema(
+    name="morse_code.is_running",
+    condition_type=IsRunningCondition,
+    schema=cv.Schema(
         {
             cv.GenerateID(): cv.use_id(MorseCodeComponent),
         }
