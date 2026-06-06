@@ -129,6 +129,7 @@ void MorseCode::finish_() {
   ESP_LOGD(TAG, "Finished.");
 }
 
+static const LogString *state_to_string(State state) __attribute__((unused));
 static const LogString *state_to_string(State state) {
   switch (state) {
     case STATE_STOPPED:
